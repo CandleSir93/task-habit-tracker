@@ -1,0 +1,1165 @@
+/* Main Styles for Task & Habit Tracker */
+:root {
+  --primary-color: #3f51b5;
+  --primary-light: #757de8;
+  --primary-dark: #002984;
+  --secondary-color: #00bcd4;
+  --secondary-light: #62efff;
+  --secondary-dark: #008ba3;
+  --accent-color: #7c4dff;
+  --accent-color-light: #b47cff;
+  --accent-color-dark: #3f1dcb;
+  --accent-color-2: #ff4081;
+  --accent-color-2-light: #ff79b0;
+  --accent-color-2-dark: #c60055;
+  --background-color: #f5f7fa;
+  --card-background: #ffffff;
+  --text-color: #263238;
+  --text-secondary: #546e7a;
+  --border-color: #e0e0e0;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --success-color: #4caf50;
+  --success-light: #80e27e;
+  --warning-color: #ffab00;
+  --warning-light: #ffdd4b;
+  --danger-color: #f44336;
+  --danger-light: #ff7961;
+  --font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+  --card-radius: 12px;
+  --button-radius: 8px;
+  --input-radius: 8px;
+  --transition-speed: 0.3s;
+  --header-height: 64px;
+  --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Dark mode variables */
+.dark-mode {
+  --primary-color: #5c6bc0;
+  --primary-light: #8e99f3;
+  --primary-dark: #26418f;
+  --secondary-color: #26c6da;
+  --secondary-light: #6ff9ff;
+  --secondary-dark: #0095a8;
+  --accent-color: #9575cd;
+  --accent-color-light: #c7a4ff;
+  --accent-color-dark: #65499c;
+  --background-color: #121212;
+  --card-background: #1e1e1e;
+  --text-color: #eceff1;
+  --text-secondary: #b0bec5;
+  --border-color: #424242;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  line-height: 1.6;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  transition: all var(--transition-speed) ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Global typography improvements */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 0.5em;
+  letter-spacing: -0.01em;
+}
+
+h1 { font-size: 2.25rem; }
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.35rem; }
+
+p {
+  margin-bottom: 1rem;
+}
+
+/* Improved buttons */
+button {
+  font-family: var(--font-family);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Links */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--primary-light);
+}
+
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+header {
+  text-align: center;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+header h1 {
+  margin: 0;
+  color: var(--primary-color);
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+}
+
+header h1:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 40px;
+  height: 4px;
+  background: var(--accent-color);
+  border-radius: 2px;
+}
+
+/* Navigation Menu Styles */
+.main-nav {
+  display: flex;
+  gap: 20px;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-toggle {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: var(--button-radius);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+  letter-spacing: 0.3px;
+}
+
+.dropdown-toggle:hover {
+  background-color: var(--primary-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.dropdown-arrow {
+  font-size: 10px;
+  transition: transform 0.2s ease;
+}
+
+.dropdown:hover .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  background-color: var(--card-background);
+  min-width: 180px;
+  box-shadow: var(--shadow-md);
+  z-index: 10;
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  animation: dropdownAppear 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes dropdownAppear {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu a {
+  color: var(--text-color);
+  padding: 14px 20px;
+  text-decoration: none;
+  display: block;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.dropdown-menu a:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--primary-color);
+  padding-left: 24px;
+}
+
+.dark-mode .dropdown-menu a:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+h1 {
+  color: var(--primary-color);
+}
+
+.content-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: space-between;
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.calendar-container {
+  flex: 2;
+  min-width: 300px;
+  background-color: var(--card-background);
+  padding: 25px;
+  border-radius: var(--card-radius);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-speed) ease;
+  border: 1px solid var(--border-color);
+}
+
+.calendar-container:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+}
+
+.tasks-container {
+  flex: 1;
+  min-width: 300px;
+  background-color: var(--card-background);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.habits-container {
+  flex: 1;
+  min-width: 300px;
+  background-color: var(--card-background);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+/* Form Styles */
+.form-control {
+  margin-bottom: 15px;
+}
+
+.add-new-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--button-radius);
+  padding: 12px 20px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+  box-shadow: var(--shadow-sm);
+  letter-spacing: 0.3px;
+}
+
+.add-new-btn:hover {
+  background-color: var(--primary-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.task-form-expanded, .habit-form-expanded {
+  background-color: var(--card-background);
+  padding: 20px;
+  border-radius: var(--card-radius);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 25px;
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-speed) ease;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-group.half {
+  flex: 1;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancel-btn {
+  background-color: #f8f9fa;
+  color: #212529;
+  border: 1px solid #dee2e6;
+}
+
+.submit-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--button-radius);
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+  box-shadow: var(--shadow-sm);
+  letter-spacing: 0.3px;
+}
+
+input, select, textarea, button {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: var(--input-radius);
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+input:focus, select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2);
+}
+
+button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  letter-spacing: 0.3px;
+}
+
+button:hover {
+  background-color: var(--primary-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.task-form button, .habit-form button {
+  width: auto;
+  white-space: nowrap;
+}
+
+/* Task List Styles */
+.task-list {
+  margin-top: 20px;
+}
+
+.task-list h3 {
+  margin-bottom: 15px;
+  color: var(--primary-color);
+}
+
+.task-category {
+  margin-bottom: 25px;
+}
+
+.category-header {
+  font-size: 16px;
+  color: var(--dark-text);
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 2px solid #eee;
+}
+
+.task-list ul {
+  list-style-type: none;
+  padding: 0;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.no-tasks-message {
+  text-align: center;
+  padding: 20px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.task-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s ease;
+}
+
+.task-item:hover {
+  background-color: #f0f0f0;
+}
+
+.task-item:last-child {
+  border-bottom: none;
+}
+
+.task-item.completed span {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.task-checkbox-container {
+  padding-top: 2px;
+}
+
+.task-checkbox {
+  margin-right: 12px;
+  width: auto;
+  height: 18px;
+  width: 18px;
+}
+
+.task-content {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.task-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.task-title {
+  font-weight: 500;
+}
+
+.task-priority {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  color: white;
+  margin-left: 10px;
+}
+
+.task-description {
+  font-size: 14px;
+  color: #6c757d;
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+
+.task-delete {
+  margin-left: auto;
+  background-color: var(--accent-color);
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: background-color 0.2s ease;
+  border: none;
+}
+
+.task-delete:hover {
+  background-color: #e04040;
+}
+
+/* Habit Tracker Styles */
+.habit-item {
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 15px;
+}
+
+.habit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.habit-header span {
+  font-weight: bold;
+}
+
+.habit-delete {
+  width: 28px;
+  height: 28px;
+  font-size: 16px;
+  background-color: var(--accent-color);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.habit-status {
+  display: flex;
+  align-items: center;
+}
+
+.habit-status input[type="checkbox"] {
+  width: auto;
+  margin-right: 10px;
+}
+
+/* Custom Calendar Styling */
+.custom-calendar {
+  width: 100%;
+  border: none;
+  font-family: inherit;
+  box-shadow: var(--shadow-md);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.calendar-header button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 5px 15px;
+  border-radius: var(--button-radius);
+  cursor: pointer;
+  width: auto;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  letter-spacing: 0.3px;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background-color: #f0f0f0;
+  padding: 10px 0;
+  text-align: center;
+  font-weight: bold;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background-color: #e0e0e0;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.calendar-day:hover {
+  background-color: #f0f0f0;
+}
+
+.calendar-day.empty {
+  background-color: #f9f9f9;
+  cursor: default;
+}
+
+.calendar-day.selected {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.calendar-day.has-task::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--accent-color);
+}
+
+.calendar-day.has-habit::before {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--secondary-color);
+}
+
+.calendar-day.has-log::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--accent-color-2);
+}
+
+/* Daily Log Styles */
+.daily-log-container, .settings-container {
+  width: 100%;
+  max-width: 800px;
+  padding: 28px;
+  background-color: var(--card-background);
+  border-radius: var(--card-radius);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 25px;
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-speed) ease;
+}
+
+.daily-log-container:hover, .settings-container:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.daily-log-container h2, .settings-container h2 {
+  color: var(--primary-dark);
+  margin-bottom: 1.2em;
+  position: relative;
+  display: inline-block;
+}
+
+.daily-log-container h2:after, .settings-container h2:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 40px;
+  height: 3px;
+  background: var(--accent-color);
+  border-radius: 2px;
+}
+
+/* Settings Page Styles */
+.settings-container h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: var(--primary-color);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+}
+
+.empty-list-message {
+  color: #777;
+  font-style: italic;
+  margin: 10px 0;
+}
+
+.settings-section {
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.settings-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 24px;
+  background: var(--accent-color);
+  border-radius: 2px;
+}
+
+.settings-section h3 {
+  font-size: 1.25rem;
+  margin: 0 0 20px 15px;
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+.settings-section:first-of-type {
+  margin-top: 10px;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-radius: var(--card-radius);
+  margin-bottom: 15px;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  transition: all 0.2s ease;
+}
+
+.setting-item:hover {
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+  border-color: var(--primary-light);
+}
+
+.setting-label {
+  flex: 1;
+}
+
+.setting-label span {
+  font-weight: 500;
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* Medication Management Styles */
+.medications-list {
+  margin-top: 15px;
+  margin-bottom: 20px;
+}
+
+.medication-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.medication-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  background-color: var(--background-color);
+  border-radius: var(--card-radius);
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.medication-item:hover {
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+  border-color: var(--accent-color-light);
+}
+
+.medication-item span {
+  flex: 1;
+}
+
+.remove-med-btn {
+  background-color: transparent;
+  color: var(--danger-color);
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 6px 10px;
+  border-radius: 50%;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.remove-med-btn:hover {
+  color: white;
+  background-color: var(--danger-color);
+  transform: scale(1.1);
+}
+
+.medication-form {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 100%;
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.med-input {
+  width: 100%;
+  min-width: 250px; /* Ensures space for at least 18 characters */
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--input-radius);
+  font-size: 15px;
+  transition: all 0.2s ease;
+  background-color: var(--card-background);
+  color: var(--text-color);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.med-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.15);
+  outline: none;
+}
+
+.dark-mode .med-input {
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.dark-mode .med-input:focus {
+  box-shadow: 0 0 0 3px rgba(92, 107, 192, 0.25);
+}
+
+.add-med-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--button-radius);
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  letter-spacing: 0.3px;
+  margin-top: 5px;
+  align-self: flex-start;
+}
+
+.add-med-btn:hover {
+  background-color: var(--primary-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* Multi-select dropdown for medications */
+.medication-select {
+  width: 100%;
+  min-height: 100px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--input-radius);
+  padding: 12px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+  font-size: 0.95rem;
+}
+
+.medication-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.15);
+  outline: none;
+}
+
+.medication-select option {
+  padding: 10px;
+  margin: 4px 0;
+  border-radius: 4px;
+}
+
+.medication-select option:checked {
+  background-color: var(--primary-color) !important;
+  color: white;
+  font-weight: 500;
+}
+
+.dark-mode .medication-select {
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.dark-mode .medication-select:focus {
+  box-shadow: 0 0 0 3px rgba(92, 107, 192, 0.25);
+}
+
+.form-helper-text {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  color: #777;
+}
+
+.setting-description {
+  font-size: 0.9rem;
+  color: #777;
+  margin: 0;
+}
+
+.setting-control {
+  margin-left: 20px;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 56px;
+  height: 30px;
+  transform: scale(1.1);
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 34px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+input:checked + .toggle-slider {
+  background-color: var(--primary-color);
+}
+
+input:focus + .toggle-slider {
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2), 0 0 0 3px rgba(63, 81, 181, 0.15);
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(26px);
+}
+
+.toggle-switch:hover .toggle-slider:before {
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.toggle-switch:active .toggle-slider:before {
+  width: 28px;
+}
+
+.log-details {
+  background-color: var(--background-color);
+  border-radius: var(--card-radius);
+  padding: 20px;
+  margin-top: 15px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-speed) ease;
+}
+
+.log-details:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.log-item {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.log-label {
+  font-weight: bold;
+  min-width: 140px;
+}
+
+.log-value {
+  flex: 1;
+}
+
+.mood-value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mood-indicator {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.mood-great {
+  background-color: #28a745; /* Green */
+}
+
+.mood-good {
+  background-color: #5cb85c; /* Light green */
+}
+
+.mood-neutral {
+  background-color: #6c757d; /* Gray */
+}
+
+.mood-bad {
+  background-color: #ffc107; /* Yellow */
+}
+
+.mood-terrible {
+  background-color: #dc3545; /* Red */
+}
+
+.log-form-expanded {
+  margin-top: 25px;
+  padding: 22px;
+  background-color: var(--background-color);
+  border-radius: var(--card-radius);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  animation: formAppear 0.4s ease-out;
+}
+
+@keyframes formAppear {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.log-form-expanded label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.log-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.edit-log-btn {
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+  width: auto;
+}
+
+.edit-log-btn:hover {
+  background-color: #125b32;
+}
+
+.delete-log-btn {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+  width: auto;
+}
+
+.delete-log-btn:hover {
+  background-color: #e55c5c;
+}
+
+.no-log-message {
+  text-align: center;
+  padding: 20px;
+  color: #6c757d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .content-wrapper {
+    flex-direction: column;
+  }
+  
+  .calendar-container, 
+  .tasks-container, 
+  .habits-container,
+  .daily-log-container {
+    min-width: 100%;
+  }
+  
+  header {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .dropdown-menu {
+    right: auto;
+    left: 0;
+  }
+}
