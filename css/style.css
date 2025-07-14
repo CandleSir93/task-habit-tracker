@@ -230,7 +230,7 @@ header h1:after {
   display: none;
   position: absolute;
   right: 0;
-  top: calc(100% + 8px);
+  top: 100%;
   background-color: var(--card-background);
   min-width: 180px;
   box-shadow: var(--shadow-md);
@@ -238,6 +238,7 @@ header h1:after {
   border-radius: var(--card-radius);
   overflow: hidden;
   animation: dropdownAppear 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-top: 8px;
 }
 
 @keyframes dropdownAppear {
@@ -247,6 +248,16 @@ header h1:after {
 
 .dropdown:hover .dropdown-menu {
   display: block;
+}
+
+.dropdown::after {
+  content: '';
+  position: absolute;
+  height: 8px; 
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  z-index: 5;
 }
 
 .dropdown-menu a {
