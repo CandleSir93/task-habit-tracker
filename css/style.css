@@ -1,4 +1,40 @@
 /* Main Styles for Task & Habit Tracker */
+
+/* Header Styles */
+header {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  padding: 1rem 2rem;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  min-height: var(--header-height);
+}
+
+header h1 {
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
+}
+
+/* Dark mode header adjustments */
+.dark-mode header {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dark-mode header h1 {
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
 :root {
   --primary-color: #3f51b5;
   --primary-light: #757de8;
