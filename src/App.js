@@ -1299,9 +1299,9 @@ class App extends React.Component {
               </div>
             </div>
           )}
-          
-          {this.renderWeeklySummary()}
         </div>
+        
+        {this.renderWeeklySummary()}
       </div>
     );
   }
