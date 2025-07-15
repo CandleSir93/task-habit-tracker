@@ -222,72 +222,19 @@ function HabitTracker({ habits, selectedDate, onHabitToggle, onHabitDelete }) {
   );
 }
 
-// Login Component
-function Login({ onLogin, isLoading, errorMessage }) {
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [isRegistering, setIsRegistering] = React.useState(false);
-  
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (email && password) {
-      onLogin(email, password, isRegistering);
-    }
-  };
-  
-  return (
-    <div className="login-container">
-      <h2>{isRegistering ? 'Create Account' : 'Login'}</h2>
-      {errorMessage && <div className="error-message">{errorMessage}</div>}
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input 
-            type="email" 
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input 
-            type="password" 
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-actions">
-          <button 
-            type="submit" 
-            disabled={isLoading}
-            className="submit-btn"
-          >
-            {isLoading ? 'Please wait...' : (isRegistering ? 'Register' : 'Login')}
-          </button>
-        </div>
-      </form>
-      <div className="login-footer">
-        <button 
-          className="link-btn" 
-          onClick={() => setIsRegistering(!isRegistering)}
-        >
-          {isRegistering ? 'Already have an account? Login' : 'Need an account? Register'}
-        </button>
-      </div>
-    </div>
-  );
-}
-
 // Main App Component
 class App extends React.Component {
   constructor(props) {
     super(props);
     
-    // Initial state
+    // Load data from localStorage if available
+    const savedTasks = localStorage.getItem('tasks');
+    const savedHabits = localStorage.getItem('habits');
+    const savedDailyLogs = localStorage.getItem('dailyLogs');
+    
+    // Load settings from localStorage if available
+    const savedSettings = localStorage.getItem('settings');
+    
     this.state = {
       currentPage: 'main', // 'main', 'dailyLog', or 'settings'
       selectedDate: new Date(),
@@ -302,175 +249,14 @@ class App extends React.Component {
       isEditingLog: false,
       editingLogId: null,
       newMedicationName: '',
-      medications: [],
-      settings: {
+      medications: localStorage.getItem('medications') ? 
+        JSON.parse(localStorage.getItem('medications')) : [],
+      settings: savedSettings ? JSON.parse(savedSettings) : {
         darkMode: false
       },
       taskCategories: ['Personal', 'Work', 'Health', 'Education', 'Social', 'Other'],
       taskPriorities: ['Low', 'Medium', 'High'],
       moodOptions: ['Great', 'Good', 'Neutral', 'Bad', 'Terrible'],
-      tasks: [],
-      habits: [],
-      dailyLogs: [],
-      newLogData: {
-        wakeupTime: '',
-        firstInteraction: '',
-        mood: 'Neutral',
-        meals: '',
-        physicalActivity: '',
-        medications: [],
-        bedTime: ''
-      },
-      // Auth related states
-      isLoading: true,
-      isAuthenticated: false,
-      user: null,
-      authError: null,
-      syncStatus: 'synced', // 'syncing', 'synced', 'error'
-    };
-    
-    // Setup Firebase auth state change listener
-    this.unsubscribeAuth = null;
-  }
-  
-  // Initialize Firebase auth listener
-  componentDidMount() {
-    this.unsubscribeAuth = window.firebaseAuth.onAuthStateChanged((user) => {
-      if (user) {
-        // User is signed in
-        this.setState({ 
-          isAuthenticated: true, 
-          user,
-          isLoading: false 
-        }, this.loadUserData);
-      } else {
-        // User is signed out
-        this.setState({ 
-          isAuthenticated: false, 
-          user: null,
-          isLoading: false 
-        });
-      }
-    });
-  }
-  
-  // Clean up auth listener when component unmounts
-  componentWillUnmount() {
-    if (this.unsubscribeAuth) {
-      this.unsubscribeAuth();
-    }
-  }
-  
-  // Load user data from Firebase
-  loadUserData = () => {
-    const { user } = this.state;
-    if (!user) return;
-    
-    this.setState({ syncStatus: 'syncing' });
-    
-    const userRef = window.firebaseDB.ref(`users/${user.uid}`);
-    
-    userRef.once('value')
-      .then((snapshot) => {
-        const userData = snapshot.val() || {};
-        
-        // Format dates in data
-        const formattedData = {
-          tasks: userData.tasks ? Object.values(userData.tasks).map(task => ({
-            ...task,
-            date: task.date ? new Date(task.date) : null
-          })) : [],
-          habits: userData.habits ? Object.values(userData.habits).map(habit => ({
-            ...habit,
-            completedDates: habit.completedDates ? 
-              habit.completedDates.map(date => new Date(date)) : []
-          })) : [],
-          dailyLogs: userData.dailyLogs ? Object.values(userData.dailyLogs).map(log => ({
-            ...log,
-            date: log.date ? new Date(log.date) : null
-          })) : [],
-          medications: userData.medications || [],
-          settings: userData.settings || { darkMode: false }
-        };
-        
-        this.setState({
-          tasks: formattedData.tasks,
-          habits: formattedData.habits,
-          dailyLogs: formattedData.dailyLogs,
-          medications: formattedData.medications,
-          settings: formattedData.settings,
-          syncStatus: 'synced'
-        });
-        
-        // Apply dark mode if needed
-        if (formattedData.settings.darkMode) {
-          document.body.classList.add('dark-mode');
-        } else {
-          document.body.classList.remove('dark-mode');
-        }
-      })
-      .catch(error => {
-        console.error("Error loading data:", error);
-        this.setState({ syncStatus: 'error' });
-        
-        // Fallback to localStorage if Firebase fails
-        this.loadFromLocalStorage();
-      });
-  };
-  
-  // Save user data to Firebase
-  saveUserData = () => {
-    const { user, tasks, habits, dailyLogs, medications, settings } = this.state;
-    if (!user) return;
-    
-    this.setState({ syncStatus: 'syncing' });
-    
-    // Prepare data for Firebase storage (can't store Date objects directly)
-    const dataToSave = {
-      tasks: tasks.map(task => ({
-        ...task,
-        date: task.date ? task.date.toISOString() : null
-      })),
-      habits: habits.map(habit => ({
-        ...habit,
-        completedDates: habit.completedDates.map(date => date.toISOString())
-      })),
-      dailyLogs: dailyLogs.map(log => ({
-        ...log,
-        date: log.date ? log.date.toISOString() : null
-      })),
-      medications,
-      settings,
-      lastUpdated: new Date().toISOString()
-    };
-    
-    const userRef = window.firebaseDB.ref(`users/${user.uid}`);
-    
-    userRef.set(dataToSave)
-      .then(() => {
-        this.setState({ syncStatus: 'synced' });
-        
-        // Also save to localStorage as backup
-        this.saveToLocalStorage();
-      })
-      .catch(error => {
-        console.error("Error saving data:", error);
-        this.setState({ syncStatus: 'error' });
-        
-        // Still save to localStorage as backup
-        this.saveToLocalStorage();
-      });
-  };
-  
-  // Load data from localStorage (fallback)
-  loadFromLocalStorage = () => {
-    const savedTasks = localStorage.getItem('tasks');
-    const savedHabits = localStorage.getItem('habits');
-    const savedDailyLogs = localStorage.getItem('dailyLogs');
-    const savedSettings = localStorage.getItem('settings');
-    const savedMedications = localStorage.getItem('medications');
-    
-    this.setState({
       tasks: savedTasks ? JSON.parse(savedTasks).map(task => ({
         ...task,
         date: task.date ? new Date(task.date) : null
@@ -483,100 +269,32 @@ class App extends React.Component {
         ...log,
         date: log.date ? new Date(log.date) : null
       })) : [],
-      medications: savedMedications ? JSON.parse(savedMedications) : [],
-      settings: savedSettings ? JSON.parse(savedSettings) : { darkMode: false }
-    });
-  };
+      newLogData: {
+        wakeupTime: '',
+        firstInteraction: '',
+        mood: 'Neutral',
+        meals: '',
+        physicalActivity: '',
+        medications: [],
+        bedTime: ''
+      }
+    };
+  }
   
-  // Save data to localStorage (backup)
-  saveToLocalStorage = () => {
-    const { tasks, habits, dailyLogs, medications, settings } = this.state;
-    
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-    localStorage.setItem('habits', JSON.stringify(habits));
-    localStorage.setItem('dailyLogs', JSON.stringify(dailyLogs));
-    localStorage.setItem('settings', JSON.stringify(settings));
-    localStorage.setItem('medications', JSON.stringify(medications));
+  // Save data to localStorage when state updates
+  componentDidUpdate() {
+    localStorage.setItem('tasks', JSON.stringify(this.state.tasks));
+    localStorage.setItem('habits', JSON.stringify(this.state.habits));
+    localStorage.setItem('dailyLogs', JSON.stringify(this.state.dailyLogs));
+    localStorage.setItem('settings', JSON.stringify(this.state.settings));
+    localStorage.setItem('medications', JSON.stringify(this.state.medications));
     
     // Apply dark mode class to body element
-    if (settings.darkMode) {
+    if (this.state.settings.darkMode) {
       document.body.classList.add('dark-mode');
     } else {
       document.body.classList.remove('dark-mode');
     }
-  };
-  
-  // Handle authentication
-  handleAuthentication = (email, password, isRegistering) => {
-    this.setState({ isLoading: true, authError: null });
-    
-    const authPromise = isRegistering 
-      ? window.firebaseAuth.createUserWithEmailAndPassword(email, password)
-      : window.firebaseAuth.signInWithEmailAndPassword(email, password);
-      
-    authPromise
-      .then(userCredential => {
-        // Successfully authenticated
-        this.setState({
-          isAuthenticated: true,
-          user: userCredential.user,
-          isLoading: false
-        });
-      })
-      .catch(error => {
-        console.error("Authentication error:", error);
-        this.setState({ 
-          authError: error.message,
-          isLoading: false
-        });
-      });
-  };
-  
-  // Handle sign out
-  handleSignOut = () => {
-    window.firebaseAuth.signOut()
-      .then(() => {
-        this.setState({
-          isAuthenticated: false,
-          user: null
-        });
-      })
-      .catch(error => {
-        console.error("Sign out error:", error);
-      });
-  };
-  
-  // Save data when state updates
-  componentDidUpdate(prevProps, prevState) {
-    // Check if any data has changed
-    const dataChanged = 
-      JSON.stringify(prevState.tasks) !== JSON.stringify(this.state.tasks) ||
-      JSON.stringify(prevState.habits) !== JSON.stringify(this.state.habits) ||
-      JSON.stringify(prevState.dailyLogs) !== JSON.stringify(this.state.dailyLogs) ||
-      JSON.stringify(prevState.settings) !== JSON.stringify(this.state.settings) ||
-      JSON.stringify(prevState.medications) !== JSON.stringify(this.state.medications);
-    
-    // If data changed and user is authenticated, save to Firebase
-    if (dataChanged && this.state.isAuthenticated) {
-      this.saveUserData();
-    } 
-    // If data changed but user is not authenticated, only save to localStorage
-    else if (dataChanged) {
-      this.saveToLocalStorage();
-    }
-  }
-  
-  // Render login screen
-  renderLoginPage() {
-    return (
-      <div className="login-page">
-        <Login 
-          onLogin={this.handleAuthentication} 
-          isLoading={this.state.isLoading}
-          errorMessage={this.state.authError}
-        />
-      </div>
-    );
   }
   
   // Calendar date change handler
@@ -1140,6 +858,7 @@ class App extends React.Component {
             habits={this.state.habits}
             dailyLogs={this.state.dailyLogs}
           />
+          {this.renderWeeklySummary()}
         </div>
         
         <div className="daily-log-container">
@@ -1389,16 +1108,6 @@ class App extends React.Component {
   }
   
   render() {
-    const { isLoading, isAuthenticated, syncStatus } = this.state;
-    
-    if (isLoading) {
-      return <div className="loading-screen">Loading...</div>;
-    }
-    
-    if (!isAuthenticated) {
-      return this.renderLoginPage();
-    }
-    
     return (
       <div className="app-container">
         <header>
@@ -1410,23 +1119,10 @@ class App extends React.Component {
                 <a href="#" onClick={(e) => { e.preventDefault(); this.setState({ currentPage: 'main' }); }}>Dashboard</a>
                 <a href="#" onClick={(e) => { e.preventDefault(); this.setState({ currentPage: 'dailyLog' }); }}>Daily Log</a>
                 <a href="#" onClick={(e) => { e.preventDefault(); this.setState({ currentPage: 'settings' }); }}>Settings</a>
-                <a href="#" onClick={(e) => { e.preventDefault(); this.handleSignOut(); }}>Sign Out</a>
               </div>
             </div>
           </nav>
         </header>
-        
-        {syncStatus === 'syncing' && (
-          <div className="sync-status syncing">
-            <span className="sync-icon">⟳</span> Syncing...
-          </div>
-        )}
-        
-        {syncStatus === 'error' && (
-          <div className="sync-status error">
-            <span className="sync-icon">⚠️</span> Sync Error. Data saved locally.
-          </div>
-        )}
         
         {this.state.currentPage === 'main' ? this.renderMainPage() : 
          this.state.currentPage === 'dailyLog' ? this.renderDailyLogPage() : 
