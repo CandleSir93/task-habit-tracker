@@ -236,7 +236,7 @@ class App extends React.Component {
     const savedSettings = localStorage.getItem('settings');
     
     this.state = {
-      currentPage: 'main', // 'main', 'dailyLog', or 'settings'
+      currentPage: 'main', // 'main', 'dailyLog', 'profile', or 'settings'
       selectedDate: new Date(),
       newTaskTitle: '',
       newTaskDescription: '',
@@ -253,6 +253,15 @@ class App extends React.Component {
         JSON.parse(localStorage.getItem('medications')) : [],
       settings: savedSettings ? JSON.parse(savedSettings) : {
         darkMode: false
+      },
+      userProfile: localStorage.getItem('userProfile') ? 
+        JSON.parse(localStorage.getItem('userProfile')) : {
+        name: '',
+        age: '',
+        gender: '',
+        height: '',
+        weight: '',
+        healthGoals: ''
       },
       taskCategories: ['Personal', 'Work', 'Health', 'Education', 'Social', 'Other'],
       taskPriorities: ['Low', 'Medium', 'High'],
@@ -288,6 +297,7 @@ class App extends React.Component {
     localStorage.setItem('dailyLogs', JSON.stringify(this.state.dailyLogs));
     localStorage.setItem('settings', JSON.stringify(this.state.settings));
     localStorage.setItem('medications', JSON.stringify(this.state.medications));
+    localStorage.setItem('userProfile', JSON.stringify(this.state.userProfile));
     
     // Apply dark mode class to body element
     if (this.state.settings.darkMode) {
@@ -1107,6 +1117,118 @@ class App extends React.Component {
     );
   }
   
+  // Handle user profile input changes
+  handleProfileInputChange = (e) => {
+    const { name, value } = e.target;
+    this.setState(prevState => ({
+      userProfile: {
+        ...prevState.userProfile,
+        [name]: value
+      }
+    }));
+  }
+
+  // Render user profile page
+  renderProfilePage() {
+    const { userProfile } = this.state;
+    
+    return (
+      <div className="content-wrapper">
+        <div className="profile-container">
+          <h2>User Profile</h2>
+          
+          <form className="profile-form">
+            <div className="form-group">
+              <label htmlFor="name">Full Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={userProfile.name}
+                onChange={this.handleProfileInputChange}
+                placeholder="Enter your full name"
+              />
+            </div>
+            
+            <div className="form-row">
+              <div className="form-group half">
+                <label htmlFor="age">Age</label>
+                <input
+                  type="number"
+                  id="age"
+                  name="age"
+                  min="1"
+                  max="120"
+                  value={userProfile.age}
+                  onChange={this.handleProfileInputChange}
+                  placeholder="Years"
+                />
+              </div>
+              
+              <div className="form-group half">
+                <label htmlFor="gender">Gender</label>
+                <select
+                  id="gender"
+                  name="gender"
+                  value={userProfile.gender}
+                  onChange={this.handleProfileInputChange}
+                >
+                  <option value="">Select gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Non-binary">Non-binary</option>
+                  <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="form-row">
+              <div className="form-group half">
+                <label htmlFor="height">Height</label>
+                <input
+                  type="text"
+                  id="height"
+                  name="height"
+                  value={userProfile.height}
+                  onChange={this.handleProfileInputChange}
+                  placeholder="cm or ft/in"
+                />
+              </div>
+              
+              <div className="form-group half">
+                <label htmlFor="weight">Weight</label>
+                <input
+                  type="text"
+                  id="weight"
+                  name="weight"
+                  value={userProfile.weight}
+                  onChange={this.handleProfileInputChange}
+                  placeholder="kg or lbs"
+                />
+              </div>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="healthGoals">Health Goals</label>
+              <textarea
+                id="healthGoals"
+                name="healthGoals"
+                value={userProfile.healthGoals}
+                onChange={this.handleProfileInputChange}
+                placeholder="Describe your health and wellness goals"
+                rows="4"
+              ></textarea>
+            </div>
+            
+            <div className="form-notification">
+              <p>Your profile information is saved automatically.</p>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   render() {
     return (
       <div className="app-container">
@@ -1118,6 +1240,7 @@ class App extends React.Component {
               <div className="dropdown-menu">
                 <a href="#" onClick={(e) => { e.preventDefault(); this.setState({ currentPage: 'main' }); }}>Dashboard</a>
                 <a href="#" onClick={(e) => { e.preventDefault(); this.setState({ currentPage: 'dailyLog' }); }}>Daily Log</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); this.setState({ currentPage: 'profile' }); }}>User Profile</a>
                 <a href="#" onClick={(e) => { e.preventDefault(); this.setState({ currentPage: 'settings' }); }}>Settings</a>
               </div>
             </div>
@@ -1126,6 +1249,7 @@ class App extends React.Component {
         
         {this.state.currentPage === 'main' ? this.renderMainPage() : 
          this.state.currentPage === 'dailyLog' ? this.renderDailyLogPage() : 
+         this.state.currentPage === 'profile' ? this.renderProfilePage() : 
          this.renderSettingsPage()}
       </div>
     );
