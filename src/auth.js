@@ -1,7 +1,11 @@
 // Authentication components for Task & Habit Tracker
+console.log('Auth module loaded');
+
+// Creating global auth components
+window.Auth = {};
 
 // Login component
-class Login extends React.Component {
+window.Auth.Login = class extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -82,7 +86,7 @@ class Login extends React.Component {
 }
 
 // Register component
-class Register extends React.Component {
+window.Auth.Register = class extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

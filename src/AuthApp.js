@@ -1,9 +1,6 @@
 // AuthApp.js - Modified App component with authentication & SQLite persistence
 // This wraps the main App functionality with authentication and syncing
-
-// Import API helpers
-// Note: In a production app, you would use ES6 imports, but we're using script tags here
-const API = {}; // Will be populated when api.js loads
+console.log('AuthApp module loaded');
 
 class AuthApp extends React.Component {
   constructor(props) {
@@ -77,7 +74,7 @@ class AuthApp extends React.Component {
       this.setState({ isLoading: true });
       
       // Call API to login
-      const response = await API.login(username, password);
+      const response = await window.API.login(username, password);
       
       // Store user data
       localStorage.setItem('user', JSON.stringify(response.user));
@@ -103,7 +100,7 @@ class AuthApp extends React.Component {
       this.setState({ isLoading: true });
       
       // Call API to register
-      await API.register(username, email, password);
+      await window.API.register(username, email, password);
       
       // Automatically login after successful registration
       await this.handleLogin(username, password);
@@ -118,7 +115,7 @@ class AuthApp extends React.Component {
   handleLogout = async () => {
     try {
       // Call API to logout
-      await API.logout();
+      await window.API.logout();
       
       // Clear local storage
       localStorage.removeItem('user');
@@ -160,7 +157,7 @@ class AuthApp extends React.Component {
       
       if (appData) {
         // Send data to server
-        const response = await API.syncData(appData);
+        const response = await window.API.syncData(appData);
         
         // Update app with merged data from server
         this.appRef.current?.updateDataFromSync(response.data);
@@ -185,14 +182,14 @@ class AuthApp extends React.Component {
     
     if (authView === 'login') {
       return (
-        <Login 
+        <window.Auth.Login 
           onLogin={this.handleLogin}
           onSwitchToRegister={() => this.switchAuthView('register')}
         />
       );
     } else {
       return (
-        <Register
+        <window.Auth.Register
           onRegister={this.handleRegister}
           onSwitchToLogin={() => this.switchAuthView('login')}
         />

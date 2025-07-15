@@ -1,10 +1,13 @@
 // API helper functions for communicating with the backend
 console.log('API module loaded');
 
+// Create a global API object for browser compatibility
+window.API = {};
+
 const API_URL = 'http://localhost:5000/api';
 
 // User Authentication
-export async function register(username, email, password) {
+API.register = async function(username, email, password) {
   console.log('Registering user...');
   const response = await fetch(`${API_URL}/register`, {
     method: 'POST',
@@ -23,7 +26,7 @@ export async function register(username, email, password) {
   return response.json();
 }
 
-export async function login(username, password) {
+API.login = async function(username, password) {
   const response = await fetch(`${API_URL}/login`, {
     method: 'POST',
     headers: {
@@ -41,7 +44,7 @@ export async function login(username, password) {
   return response.json();
 }
 
-export async function logout() {
+API.logout = async function() {
   const response = await fetch(`${API_URL}/logout`, {
     method: 'POST',
     credentials: 'include',
@@ -56,7 +59,7 @@ export async function logout() {
 }
 
 // Profile Management
-export async function getUserProfile() {
+API.getUserProfile = async function() {
   const response = await fetch(`${API_URL}/user/profile`, {
     method: 'GET',
     credentials: 'include',
@@ -74,7 +77,7 @@ export async function getUserProfile() {
   return response.json();
 }
 
-export async function updateUserProfile(profileData) {
+API.updateUserProfile = async function(profileData) {
   const response = await fetch(`${API_URL}/user/profile`, {
     method: 'PUT',
     headers: {
@@ -93,7 +96,7 @@ export async function updateUserProfile(profileData) {
 }
 
 // Tasks Management
-export async function getTasks() {
+API.getTasks = async function() {
   const response = await fetch(`${API_URL}/tasks`, {
     method: 'GET',
     credentials: 'include',
@@ -107,7 +110,7 @@ export async function getTasks() {
   return response.json();
 }
 
-export async function createTask(taskData) {
+API.createTask = async function(taskData) {
   const response = await fetch(`${API_URL}/tasks`, {
     method: 'POST',
     headers: {
@@ -125,7 +128,7 @@ export async function createTask(taskData) {
   return response.json();
 }
 
-export async function updateTask(taskId, taskData) {
+API.updateTask = async function(taskId, taskData) {
   const response = await fetch(`${API_URL}/tasks/${taskId}`, {
     method: 'PUT',
     headers: {
@@ -143,7 +146,7 @@ export async function updateTask(taskId, taskData) {
   return response.json();
 }
 
-export async function deleteTask(taskId) {
+API.deleteTask = async function(taskId) {
   const response = await fetch(`${API_URL}/tasks/${taskId}`, {
     method: 'DELETE',
     credentials: 'include',
@@ -158,7 +161,7 @@ export async function deleteTask(taskId) {
 }
 
 // Habits Management
-export async function getHabits() {
+API.getHabits = async function() {
   const response = await fetch(`${API_URL}/habits`, {
     method: 'GET',
     credentials: 'include',
@@ -172,7 +175,7 @@ export async function getHabits() {
   return response.json();
 }
 
-export async function createHabit(habitData) {
+API.createHabit = async function(habitData) {
   const response = await fetch(`${API_URL}/habits`, {
     method: 'POST',
     headers: {
@@ -190,7 +193,7 @@ export async function createHabit(habitData) {
   return response.json();
 }
 
-export async function updateHabitCompletion(habitId, date, completed) {
+API.updateHabitCompletion = async function(habitId, date, completed) {
   const response = await fetch(`${API_URL}/habits/${habitId}/completion`, {
     method: 'POST',
     headers: {
@@ -209,7 +212,7 @@ export async function updateHabitCompletion(habitId, date, completed) {
 }
 
 // Daily Logs Management
-export async function getLogs(date = null) {
+API.getLogs = async function(date = null) {
   let url = `${API_URL}/logs`;
   if (date) {
     url += `?date=${date}`;
@@ -228,7 +231,7 @@ export async function getLogs(date = null) {
   return response.json();
 }
 
-export async function saveLog(logData) {
+API.saveLog = async function(logData) {
   const response = await fetch(`${API_URL}/logs`, {
     method: 'POST',
     headers: {
@@ -247,7 +250,7 @@ export async function saveLog(logData) {
 }
 
 // Data Synchronization
-export async function syncData(localData) {
+API.syncData = async function(localData) {
   const response = await fetch(`${API_URL}/sync`, {
     method: 'POST',
     headers: {
