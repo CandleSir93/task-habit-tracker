@@ -269,25 +269,7 @@ let appInstance = null;
 
 // Initialize app after DOM and scripts are loaded
 function initApp() {
-  // Make API methods available 
-  Object.assign(API, {
-    register,
-    login,
-    logout,
-    getUserProfile,
-    updateUserProfile,
-    getTasks,
-    createTask,
-    updateTask,
-    deleteTask,
-    getHabits,
-    createHabit,
-    updateHabitCompletion,
-    getLogs,
-    saveLog,
-    syncData
-  });
-  
+  // API methods are already available on window.API
   console.log('AuthApp module executing - overriding root element render');
 
   // Override any previous render to the root element
