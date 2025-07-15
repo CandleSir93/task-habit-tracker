@@ -1,4 +1,5 @@
 // App.js - Main component for Task & Habit Tracker App
+// Updated with server synchronization for SQLite persistence
 
 // Mock Calendar component since we're not using npm
 class Calendar extends React.Component {
@@ -304,6 +305,76 @@ class App extends React.Component {
       document.body.classList.add('dark-mode');
     } else {
       document.body.classList.remove('dark-mode');
+    }
+  }
+  
+  // Methods for server synchronization
+  
+  // Get app data for synchronization with server
+  getDataForSync = () => {
+    return {
+      tasks: this.state.tasks.map(task => ({
+        ...task,
+        date: task.date ? task.date.toISOString() : null
+      })),
+      habits: this.state.habits.map(habit => ({
+        ...habit,
+        completedDates: habit.completedDates.map(date => date.toISOString())
+      })),
+      dailyLogs: this.state.dailyLogs.map(log => ({
+        ...log,
+        date: log.date ? log.date.toISOString() : null
+      })),
+      userProfile: this.state.userProfile,
+      medications: this.state.medications,
+      settings: this.state.settings
+    };
+  }
+  
+  // Update app data from server sync
+  updateDataFromSync = (serverData) => {
+    if (!serverData) return;
+    
+    // Process tasks from server
+    if (serverData.tasks) {
+      const tasks = serverData.tasks.map(task => ({
+        ...task,
+        date: task.date ? new Date(task.date) : null
+      }));
+      this.setState({ tasks });
+    }
+    
+    // Process habits from server
+    if (serverData.habits) {
+      const habits = serverData.habits.map(habit => ({
+        ...habit,
+        completedDates: habit.completedDates.map(date => new Date(date))
+      }));
+      this.setState({ habits });
+    }
+    
+    // Process daily logs from server
+    if (serverData.dailyLogs) {
+      const dailyLogs = serverData.dailyLogs.map(log => ({
+        ...log,
+        date: log.date ? new Date(log.date) : null
+      }));
+      this.setState({ dailyLogs });
+    }
+    
+    // Update user profile
+    if (serverData.userProfile) {
+      this.setState({ userProfile: serverData.userProfile });
+    }
+    
+    // Update medications list
+    if (serverData.medications) {
+      this.setState({ medications: serverData.medications });
+    }
+    
+    // Update settings
+    if (serverData.settings) {
+      this.setState({ settings: serverData.settings });
     }
   }
   
@@ -1230,31 +1301,59 @@ class App extends React.Component {
   }
 
   render() {
+    const { currentPage } = this.state;
+    const { user, onLogout, onSync } = this.props; // From AuthApp wrapper
+    
+    // Set up page-specific content
+    let pageContent;
+    switch (currentPage) {
+      case 'dailyLog':
+        pageContent = this.renderDailyLogPage();
+        break;
+      case 'settings':
+        pageContent = this.renderSettingsPage();
+        break;
+      case 'profile':
+        pageContent = this.renderProfilePage();
+        break;
+      default:
+        pageContent = this.renderMainPage();
+    }
+    
     return (
       <div className="app-container">
-        <header>
+        <header className="app-header">
           <h1>Task & Habit Tracker</h1>
-          <nav className="main-nav">
+          <div className="header-right">
+            {user && (
+              <div className="user-info">
+                <span className="username">Hello, {user.username}</span>
+                <button className="sync-button" onClick={onSync} title="Sync data with server">
+                  <span role="img" aria-label="sync">🔄</span>
+                </button>
+              </div>
+            )}
             <div className="dropdown">
-              <button className="dropdown-toggle">Menu <span className="dropdown-arrow">▼</span></button>
-              <div className="dropdown-menu">
-                <a href="#" onClick={(e) => { e.preventDefault(); this.setState({ currentPage: 'main' }); }}>Dashboard</a>
-                <a href="#" onClick={(e) => { e.preventDefault(); this.setState({ currentPage: 'dailyLog' }); }}>Daily Log</a>
-                <a href="#" onClick={(e) => { e.preventDefault(); this.setState({ currentPage: 'profile' }); }}>User Profile</a>
-                <a href="#" onClick={(e) => { e.preventDefault(); this.setState({ currentPage: 'settings' }); }}>Settings</a>
+              <button className="menu-button">☰</button>
+              <div className="dropdown-content">
+                <a href="#" onClick={() => this.setState({ currentPage: 'main' })}>Main Dashboard</a>
+                <a href="#" onClick={() => this.setState({ currentPage: 'dailyLog' })}>Daily Log</a>
+                <a href="#" onClick={() => this.setState({ currentPage: 'profile' })}>Profile</a>
+                <a href="#" onClick={() => this.setState({ currentPage: 'settings' })}>Settings</a>
+                {user && (
+                  <a href="#" onClick={onLogout} className="logout-link">Logout</a>
+                )}
               </div>
             </div>
-          </nav>
+          </div>
         </header>
         
-        {this.state.currentPage === 'main' ? this.renderMainPage() : 
-         this.state.currentPage === 'dailyLog' ? this.renderDailyLogPage() : 
-         this.state.currentPage === 'profile' ? this.renderProfilePage() : 
-         this.renderSettingsPage()}
+        {pageContent}
       </div>
     );
   }
 }
 
-// Render the App
-ReactDOM.render(<App />, document.getElementById('root'));
+// Export the App component for use in AuthApp.js
+// No direct rendering here - AuthApp.js is now the entry point
+// console.log('App component loaded and ready to be instantiated by AuthApp');
