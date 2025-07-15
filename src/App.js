@@ -274,6 +274,8 @@ class App extends React.Component {
         firstInteraction: '',
         mood: 'Neutral',
         meals: '',
+        physicalActivity: '',
+        medications: [],
         bedTime: ''
       }
     };
@@ -581,6 +583,158 @@ class App extends React.Component {
     });
   }
   
+  // Get logs for the past week
+  getLastWeekLogs = () => {
+    const { selectedDate, dailyLogs } = this.state;
+    const currentDate = new Date(selectedDate);
+    const oneWeekAgo = new Date(currentDate);
+    oneWeekAgo.setDate(currentDate.getDate() - 6); // Get 7 days (including current day)
+    
+    // Filter logs within the past week
+    return dailyLogs.filter(log => {
+      const logDate = new Date(log.date);
+      return logDate >= oneWeekAgo && logDate <= currentDate;
+    }).sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort by date
+  }
+  
+  // Render weekly summary component
+  renderWeeklySummary = () => {
+    const weekLogs = this.getLastWeekLogs();
+    const daysWithLogs = weekLogs.length;
+    
+    // Count occurrences of each mood
+    const moodCounts = {};
+    this.state.moodOptions.forEach(mood => moodCounts[mood] = 0);
+    
+    // Calculate average wake up and bed times
+    let totalWakeupMinutes = 0;
+    let totalBedMinutes = 0;
+    let wakeupCount = 0;
+    let bedCount = 0;
+    
+    // Process logs
+    weekLogs.forEach(log => {
+      // Count moods
+      if (log.mood) {
+        moodCounts[log.mood] = (moodCounts[log.mood] || 0) + 1;
+      }
+      
+      // Process wake up time
+      if (log.wakeupTime) {
+        const [hours, minutes] = log.wakeupTime.split(':').map(Number);
+        totalWakeupMinutes += (hours * 60 + minutes);
+        wakeupCount++;
+      }
+      
+      // Process bedtime
+      if (log.bedTime) {
+        const [hours, minutes] = log.bedTime.split(':').map(Number);
+        totalBedMinutes += (hours * 60 + minutes);
+        bedCount++;
+      }
+    });
+    
+    // Calculate averages
+    const avgWakeupMinutes = wakeupCount > 0 ? Math.floor(totalWakeupMinutes / wakeupCount) : null;
+    const avgBedMinutes = bedCount > 0 ? Math.floor(totalBedMinutes / bedCount) : null;
+    
+    // Format times for display
+    const formatTime = (totalMinutes) => {
+      if (totalMinutes === null) return 'N/A';
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    };
+    
+    // Find most common mood
+    let mostCommonMood = 'N/A';
+    let maxMoodCount = 0;
+    Object.keys(moodCounts).forEach(mood => {
+      if (moodCounts[mood] > maxMoodCount) {
+        maxMoodCount = moodCounts[mood];
+        mostCommonMood = mood;
+      }
+    });
+
+    // Get dates for the past week (for display)
+    const pastWeekDates = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(this.state.selectedDate);
+      date.setDate(this.state.selectedDate.getDate() - i);
+      pastWeekDates.push(date);
+    }
+    
+    return (
+      <div className="weekly-summary">
+        <h3>Past Week Summary</h3>
+        
+        <div className="summary-stats">
+          <div className="summary-stat">
+            <span className="stat-label">Days Logged:</span>
+            <span className="stat-value">{daysWithLogs} / 7</span>
+          </div>
+          <div className="summary-stat">
+            <span className="stat-label">Avg. Wake Up:</span>
+            <span className="stat-value">{formatTime(avgWakeupMinutes)}</span>
+          </div>
+          <div className="summary-stat">
+            <span className="stat-label">Avg. Bedtime:</span>
+            <span className="stat-value">{formatTime(avgBedMinutes)}</span>
+          </div>
+          <div className="summary-stat">
+            <span className="stat-label">Most Common Mood:</span>
+            <span className="stat-value">
+              {mostCommonMood !== 'N/A' && 
+                <span className={`mood-indicator mood-${mostCommonMood.toLowerCase()}`}></span>
+              }
+              {mostCommonMood}
+            </span>
+          </div>
+        </div>
+        
+        <div className="weekly-mood-chart">
+          <h4>Week at a Glance</h4>
+          <div className="day-logs-grid">
+            {pastWeekDates.map((date, index) => {
+              // Find log for this date if it exists
+              const dayLog = weekLogs.find(log => {
+                const logDate = new Date(log.date);
+                return logDate.getDate() === date.getDate() && 
+                       logDate.getMonth() === date.getMonth() && 
+                       logDate.getFullYear() === date.getFullYear();
+              });
+              
+              const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+              const dayNumber = date.getDate();
+              
+              return (
+                <div 
+                  key={index} 
+                  className={`day-log-item ${dayLog ? 'has-log' : 'no-log'}`}
+                  onClick={() => this.handleDateChange(date)}
+                >
+                  <div className="day-log-date">
+                    <div className="day-name">{dayName}</div>
+                    <div className="day-number">{dayNumber}</div>
+                  </div>
+                  {dayLog ? (
+                    <div className="day-log-mood">
+                      <span className={`mood-indicator mood-${dayLog.mood.toLowerCase()}`}></span>
+                    </div>
+                  ) : (
+                    <div className="day-log-mood empty">
+                      <span className="no-data">No data</span>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   renderMainPage() {
     return (
       <div className="content-wrapper">
@@ -704,6 +858,7 @@ class App extends React.Component {
             habits={this.state.habits}
             dailyLogs={this.state.dailyLogs}
           />
+          {this.renderWeeklySummary()}
         </div>
         
         <div className="daily-log-container">

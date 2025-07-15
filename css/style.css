@@ -1187,7 +1187,160 @@ input:checked + .toggle-slider:before {
   color: #6c757d;
 }
 
-/* Responsive Design */
+/* Weekly Summary Component Styles */
+.weekly-summary {
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.weekly-summary h3 {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+.weekly-summary h4 {
+  font-size: 1rem;
+  margin: 15px 0 8px;
+  color: var(--text-secondary);
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.summary-stat {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-primary);
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+}
+
+.stat-value .mood-indicator {
+  margin-right: 5px;
+}
+
+.weekly-mood-chart {
+  margin-top: 15px;
+}
+
+.day-logs-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.day-log-item {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.day-log-item:hover {
+  background-color: var(--hover-bg);
+}
+
+.day-log-item.has-log {
+  background-color: var(--bg-primary);
+}
+
+.day-log-item.no-log {
+  background-color: var(--bg-tertiary);
+  opacity: 0.75;
+}
+
+.day-log-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.day-name {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.day-number {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.day-log-mood {
+  margin-top: 5px;
+  display: flex;
+  justify-content: center;
+}
+
+.day-log-mood.empty {
+  opacity: 0.5;
+}
+
+.no-data {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Responsive adjustments for weekly summary */
+@media (max-width: 768px) {
+  .summary-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .day-logs-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  
+  .day-log-item:nth-child(n+5) {
+    margin-top: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .day-logs-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .day-log-item:nth-child(n+4) {
+    margin-top: 5px;
+  }
+}
+
+/* Media queries for responsive design */
 @media (max-width: 768px) {
   .content-wrapper {
     flex-direction: column;
@@ -1208,5 +1361,15 @@ input:checked + .toggle-slider:before {
   .dropdown-menu {
     right: auto;
     left: 0;
+  }
+  
+  .week-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .week-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
